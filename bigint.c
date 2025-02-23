@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 
 #define mod10(x) (x - 10 * (x / 10))
 
@@ -43,10 +45,10 @@ void multiply(char num1[], char num2[], char result[]) {
     int len1 = strlen(num1);
     int len2 = strlen(num2);
     int lenR = len1 + len2;
-    int *res = calloc(lenR, sizeof(int));
+    char *res = calloc(lenR, sizeof(char));
 
-		convert_ascii_to_int_avx2(num1, len1);
-		convert_ascii_to_int_avx2(num2, len2);
+    convert_ascii_to_int_avx2(num1, len1);
+    convert_ascii_to_int_avx2(num2, len2);
 
     // Reverse the strings for easier multiplication
     for (int i = 0; i < len1 / 2; i++) {
@@ -60,45 +62,44 @@ void multiply(char num1[], char num2[], char result[]) {
         num2[len2 - i - 1] = temp;
     }
 
+
     // Perform multiplication
     for (int i = 0; i < len1; i++) {
 
-				__m256i multiplier = _mm256_set1_epi16(num1[i]);  // Create vector with '0' for subtraction
+        __m256i multiplier = _mm256_set1_epi16((short)num1[i]);  // Create vector with '0' for subtraction
 
-				int j = 0;
+        int j = 0;
+
 
         // for (j = 0; j < len2; j++) {
         //     res[i + j] += num1[i] * num2[j];
         // }
+        
+        int xlen2 = len2;
 
-        for (j = 0; j < len2; j += 16) {
+        for (j = 0; j < xlen2 - 16; j += 16) {
 
-						__m256i multiplicands = _mm256_cvtepi8_epi16(_mm_loadu_si128((__m128i*)(num2 + i)));
-						__m256i tres = _mm256_cvtepi8_epi16(_mm_loadu_si128((__m128i*)(res + i + j)));
-						
-						tres = _mm256_add_epi16(tres, _mm256_mullo_epi16(multiplier, multiplicands));
-						_mm_storeu_si128((__m128i*)(res + i + j), _mm256_cvtepi16_epi8(tres));
+            __m256i multiplicands = _mm256_cvtepi8_epi16(_mm_loadu_si128((__m128i*)(num2 + j)));
+            __m256i tres = _mm256_cvtepi8_epi16(_mm_loadu_si128((__m128i*)(res + i + j)));
+            tres = _mm256_add_epi16(tres, _mm256_mullo_epi16(multiplier, multiplicands));
 
+            _mm_storeu_si128((__m128i*)(res + i + j), 
+                        _mm_packus_epi16(_mm256_extracti128_si256(tres, 0), 
+                                        _mm256_extracti128_si256(tres, 1))
+                             );
         }
 
-        for (; j < len2; j++) {
+        for (; j < xlen2; j++) {
             res[i + j] += num1[i] * num2[j];
         }
 
         for (j = 0; j < len2; j++) {
             res[i + j + 1] += res[i + j] / 10;
-            
         }
+
         for (j = 0; j < len2; j++) {
             res[i + j] %= 10;
         }
-
-
-			
-	
-
-
-
 
     }
 

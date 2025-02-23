@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "bigint.h"
+#include <gmp.h>
 
 #define MAX_LINE_LENGTH 4096
 
@@ -42,13 +43,11 @@ void parse_csv(const char *filename)
         
             char actual[4096];
             multiply(x,y,actual);
-
+            
             if (strcmp(actual, expected) != 0) {
                 printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y,actual, expected);
                 assert(strcmp(actual, expected) == 0);
             }
-
-           
 
 
         } else {
