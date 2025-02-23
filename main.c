@@ -7,6 +7,7 @@
 
 #define MAX_LINE_LENGTH 4096
 
+
 void parse_csv(const char *filename)
 {
     FILE *fp = fopen(filename, "r");
@@ -39,14 +40,15 @@ void parse_csv(const char *filename)
        
         if (x && y && expected) {
         
-						char *actual = multiply(x,y);
+            char actual[4096];
+            multiply(x,y,actual);
 
-						if (strcmp(actual, expected) != 0) {
-								printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y,actual, expected);
-								assert(strcmp(actual, expected) == 0);
-						}
+            if (strcmp(actual, expected) != 0) {
+                printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y,actual, expected);
+                assert(strcmp(actual, expected) == 0);
+            }
 
-						free(actual);
+           
 
 
         } else {
