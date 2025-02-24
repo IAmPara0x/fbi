@@ -22,10 +22,10 @@ void parse_csv(const char *filename)
 
     while (fgets(line, sizeof(line), fp) != NULL) {
 
-				if (!parsed_column) {
-					parsed_column = true;
-					continue;
-				}
+        if (!parsed_column) {
+                parsed_column = true;
+                continue;
+        }
 				
         // Remove trailing newline, if present
         size_t len = strlen(line);
@@ -45,7 +45,7 @@ void parse_csv(const char *filename)
             multiply(x,y,actual);
             
             if (strcmp(actual, expected) != 0) {
-                printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y,actual, expected);
+                printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y, expected, actual);
                 assert(strcmp(actual, expected) == 0);
             }
 
