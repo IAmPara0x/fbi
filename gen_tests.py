@@ -4,13 +4,15 @@ import random
 import os
 import pandas as pd
 from tqdm import tqdm
+import sys
 
+sys.set_int_max_str_digits(8192)
 
 if __name__ == "__main__":
 
     TEST_CASES=10000
 
-    digits = [2**i for i in range(1,9)]
+    digits = [2**i for i in range(1,11)]
 
     tests = []
 

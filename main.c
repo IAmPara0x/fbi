@@ -6,7 +6,7 @@
 #include "bigint.h"
 #include <gmp.h>
 
-#define MAX_LINE_LENGTH 4096
+#define MAX_LINE_LENGTH 8192
 
 
 void parse_csv(const char *filename)
