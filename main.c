@@ -3,8 +3,12 @@
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
+
+#ifdef BENCH_FBI
 #include "bigint.h"
+#else
 #include <gmp.h>
+#endif
 
 #define MAX_LINE_LENGTH 8192
 
@@ -41,6 +45,8 @@ void parse_csv(const char *filename)
        
         if (x && y && expected) {
         
+#ifdef BENCH_FBI
+
             char actual[4096];
             multiply(x,y,actual);
             
@@ -48,6 +54,25 @@ void parse_csv(const char *filename)
                 printf("[FAILED] x = %s, y = %s, expected = %s, actual= %s\n", x,y, expected, actual);
                 assert(strcmp(actual, expected) == 0);
             }
+
+#else
+            mpz_t a, b, result;
+
+            mpz_init(a);
+            mpz_init(b);
+            mpz_init(result);
+
+            mpz_set_str(a, x, 10);
+            mpz_set_str(b, y, 10);
+           
+            mpz_mul(result, a, b);
+
+            
+            mpz_clear(a);
+            mpz_clear(b);
+            mpz_clear(result);
+
+#endif
 
 
         } else {
